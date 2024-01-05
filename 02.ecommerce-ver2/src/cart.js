@@ -1,6 +1,24 @@
 import { getProductElement } from "./products";
+import { findElement } from "./utils";
 
-export function setupCart({ container }) {
+export function setupCart({ container, onDecreaseClick, onIncreaseClick }) {
+  container.addEventListener("click", (event) => {
+    const targetElement = event.target;
+    const productElement = findElement(targetElement, ".product");
+    const productId = productElement.getAttribute("data-product-id");
+
+    if (
+      targetElement.matches(".btn-decrease") ||
+      targetElement.matches(".btn-increase")
+    ) {
+      if (targetElement.matches(".btn-decrease")) {
+        onDecreaseClick({ productId });
+      } else if (targetElement.matches(".btn-increase")) {
+        onIncreaseClick({ productId });
+      }
+    }
+  });
+
   const addProduct = ({ product }) => {
     const productElement = getProductElement(product);
     container.appendChild(productElement);

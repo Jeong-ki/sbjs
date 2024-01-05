@@ -2,30 +2,23 @@ import { setupProducts } from "./products";
 import { setupCounter } from "./counter";
 import { setupCart } from "./cart";
 
-function findElement(startingElement, selector) {
-  let currentElement = startingElement;
-  while (currentElement) {
-    if (currentElement.matches(selector)) {
-      return currentElement;
-    }
-    currentElement = currentElement.parentElement;
-  }
-  return null;
-}
-
-function sumAllCounts(countMap) {}
-
 async function main() {
   const { updateCount: updateProductCount, getProductById } =
     await setupProducts({
       container: document.querySelector("#products"),
+      onDecreaseClick,
+      onIncreaseClick,
     });
 
   const {
-    addProduct,
-    removeProduct,
+    addProduct: addProductToCart,
+    removeProduct: removeProductFromCart,
     updateCount: updateCartCount,
-  } = setupCart({ container: document.querySelector(".cart_items") });
+  } = setupCart({
+    container: document.querySelector(".cart_items"),
+    onDecreaseClick,
+    onIncreaseClick,
+  });
 
   const { increase, decrease, getTotalCount } = setupCounter();
 
@@ -33,58 +26,25 @@ async function main() {
     document.querySelector(".total_count").innerHTML = `(${totalCount})`;
   };
 
-  const increaseCount = (productId) => {
+  function onIncreaseClick({ productId }) {
     const count = increase({ productId });
     updateProductCount({ productId, count });
     if (count === 1) {
-      addProduct({ product: getProductById({ productId }) });
+      addProductToCart({ product: getProductById({ productId }) });
     }
     updateCartCount({ productId, count });
     updateTotalCount(getTotalCount());
-  };
-  const decreaseCount = (productId) => {
+  }
+
+  function onDecreaseClick({ productId }) {
     const count = decrease({ productId });
     updateProductCount({ productId, count });
     updateCartCount({ productId, count });
     if (count === 0) {
-      removeProduct({ product: getProductById({ productId }) });
+      removeProductFromCart({ product: getProductById({ productId }) });
     }
     updateTotalCount(getTotalCount());
-  };
-
-  document.querySelector("#products").addEventListener("click", (event) => {
-    const targetElement = event.target;
-    const productElement = findElement(targetElement, ".product");
-    const productId = productElement.getAttribute("data-product-id");
-
-    if (
-      targetElement.matches(".btn-decrease") ||
-      targetElement.matches(".btn-increase")
-    ) {
-      if (targetElement.matches(".btn-decrease")) {
-        decreaseCount(productId);
-      } else if (targetElement.matches(".btn-increase")) {
-        increaseCount(productId);
-      }
-    }
-  });
-
-  document.querySelector(".cart_items").addEventListener("click", (event) => {
-    const targetElement = event.target;
-    const productElement = findElement(targetElement, ".product");
-    const productId = productElement.getAttribute("data-product-id");
-
-    if (
-      targetElement.matches(".btn-decrease") ||
-      targetElement.matches(".btn-increase")
-    ) {
-      if (targetElement.matches(".btn-decrease")) {
-        decreaseCount(productId);
-      } else if (targetElement.matches(".btn-increase")) {
-        increaseCount(productId);
-      }
-    }
-  });
+  }
 
   document.querySelector(".btn-cart").addEventListener("click", () => {
     document.body.classList.add("displaying_cart");

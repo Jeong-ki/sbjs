@@ -1,4 +1,5 @@
 import test from "./test.json?raw";
+import { findElement } from "./utils";
 
 export function getProductElement(product, count = 0) {
   const element = document.createElement("div");
@@ -32,7 +33,11 @@ async function getProducts() {
   }
 }
 
-export async function setupProducts({ container }) {
+export async function setupProducts({
+  container,
+  onDecreaseClick,
+  onIncreaseClick,
+}) {
   const products = await getProducts();
   const productMap = {};
   products.forEach((product) => {
@@ -42,6 +47,23 @@ export async function setupProducts({ container }) {
   products.forEach((product) => {
     const productElement = getProductElement(product);
     container.appendChild(productElement);
+  });
+
+  container.addEventListener("click", (event) => {
+    const targetElement = event.target;
+    const productElement = findElement(targetElement, ".product");
+    const productId = productElement.getAttribute("data-product-id");
+
+    if (
+      targetElement.matches(".btn-decrease") ||
+      targetElement.matches(".btn-increase")
+    ) {
+      if (targetElement.matches(".btn-decrease")) {
+        onDecreaseClick({ productId });
+      } else if (targetElement.matches(".btn-increase")) {
+        onIncreaseClick({ productId });
+      }
+    }
   });
 
   const updateCount = ({ productId, count }) => {
