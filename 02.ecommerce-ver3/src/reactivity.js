@@ -46,3 +46,32 @@ export function bindReactiveState({ name, defaultValue }) {
 
   return [getter, setter];
 }
+
+// JS Proxy로 구현하는 방식 (성능 개선)
+// export function bindReactiveState({ name, defaultValue }) {
+//   if (typeof defaultValue !== "object") {
+//     throw new Error("bindReactiveState supprots only object as default value.");
+//   }
+
+//   let value = new Proxy(defaultValue, {
+//     get(target, prop) {
+//       return target[prop];
+//     },
+//     set(target, prop, newValue) {
+//       const elements = Array.from(
+//         document.querySelectorAll(
+//           `[data-subscribe-to="${name}"][data-subscription-path="${prop}"]`
+//         )
+//       );
+//       elements.forEach((element) => {
+//         if (element.tagName === "INPUT") {
+//           element.value = newValue;
+//         }
+//         element.innerHTML = newValue;
+//       });
+//       return Reflect.set(target, prop, newValue); // target[prop] = newValue; return true;
+//     },
+//   });
+
+//   return value;
+// }
