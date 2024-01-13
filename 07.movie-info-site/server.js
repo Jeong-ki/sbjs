@@ -28,13 +28,15 @@ const getFilteredMovies = (query) => {
 
 app.get("/search", (req, res) => {
   const filteredMovies = getFilteredMovies(req.query.query);
+  const initialData = { movies: filteredMovies };
+
   fs.readFile("index.html", (err, file) => {
     res.send(
       file.toString().replace(
         "<!--app-->",
-        getInitialHTML["/search"]({
-          movies: filteredMovies,
-        })
+        `<script>
+          window.__INITIAL_DATA__ = ${JSON.stringify({ initialData })}
+        </script>` + getInitialHTML["/search"](initialData)
       )
     );
   });

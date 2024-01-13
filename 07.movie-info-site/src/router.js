@@ -1,6 +1,6 @@
 let routes;
 
-export const goto = (url, { push } = {}) => {
+export const goto = (url, { push, initialData } = {}) => {
   const pathname = url.split("?")[0]; // "/" | "/search" | ...
   const params = Object.fromEntries(new URLSearchParams(url.split("?")[1]));
   if (routes[pathname]) {
@@ -9,6 +9,7 @@ export const goto = (url, { push } = {}) => {
     }
     routes[pathname]({
       searchParams: params,
+      initialData,
     });
     return;
   }
@@ -25,5 +26,7 @@ export const start = (params) => {
     }
   });
 
-  goto(location.pathname + location.search);
+  goto(location.pathname + location.search, {
+    initialData: window.__INITIAL_DATA__,
+  });
 };
