@@ -1,4 +1,9 @@
 import { start } from "./src/router";
-import { routes } from "./src/routes";
+import { routes, getInitialHTML } from "./src/routes";
 
-start({ routes });
+export { getInitialHTML };
+
+if (typeof window !== "undefined") {
+  console.log("starting the client-side routing...");
+  start({ routes });
+}
