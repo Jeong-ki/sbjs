@@ -1,0 +1,12 @@
+{
+  "name": "website",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js",
+    "test": "echo test"
+  },
+  "dependencies": {
+    "elmath-01": "^0.0.8"
+  }
+}

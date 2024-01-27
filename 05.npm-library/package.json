@@ -1,0 +1,8 @@
+{
+  "name": "elmath-root",
+  "private": true,
+  "workspaces": [
+    "library",
+    "apps/*"
+  ]
+}
